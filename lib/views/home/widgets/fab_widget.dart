@@ -14,15 +14,15 @@ class Fab extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: (_) => TaskView(
-                          id: id,
-                          titleTaskController: null,
-                          descriptionTaskController: null,
-                          task: null,
-                        )))
-            .then((value) => context.read<HomeBloc>().add(LoadTasksFetch()));
+            context,
+            CupertinoPageRoute(
+                builder: (_) => TaskView(
+                      id: id,
+                      titleTaskController: null,
+                      descriptionTaskController: null,
+                      task: null,
+                    ))).then((value) =>
+            context.read<HomeBloc>().add(const LoadTasksFetch(filter: null)));
       },
       child: Material(
         borderRadius: BorderRadius.circular(15),

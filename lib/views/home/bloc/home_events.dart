@@ -7,7 +7,11 @@ abstract class HomeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadTasksFetch extends HomeEvent {}
+class LoadTasksFetch extends HomeEvent {
+  final String? filter;
+
+  const LoadTasksFetch({required this.filter});
+}
 
 class AddNewTaskFetch extends HomeEvent {
   final Task task;

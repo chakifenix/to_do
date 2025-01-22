@@ -50,6 +50,7 @@ class TaskStorage {
   static Future<void> deleteTask(String taskId) async {
     final tasks = await loadTasks();
     // Оставляем только задачи, у которых id не совпадает с taskId
+    // tasks.removeAt(int.parse(taskId));
     final updatedTasks = tasks.where((task) => task.id != taskId).toList();
     await saveTasks(updatedTasks);
   }

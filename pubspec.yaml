@@ -39,7 +39,7 @@ dependencies:
   lottie: ^3.2.0
   animate_do: ^3.3.4
   flutter_datetime_picker_plus: ^2.2.0
-  shared_preferences: ^2.3.5
+  shared_preferences: ^2.2.3
   flutter_bloc: ^9.0.0
   equatable: ^2.0.7
   intl: ^0.20.1

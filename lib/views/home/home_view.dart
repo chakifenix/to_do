@@ -52,10 +52,10 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    context.read<HomeBloc>().add(LoadTasksFetch());
+    context.read<HomeBloc>().add(const LoadTasksFetch(filter: null));
   }
 
-  List<Task> currentTasks = [];
+  // List<Task> currentTasks = [];
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class _HomeViewState extends State<HomeView> {
     return BlocConsumer<HomeBloc, HomeState>(
       listener: (context, state) {
         if (state.taskDeleted) {
-          context.read<HomeBloc>().add(LoadTasksFetch());
+          // context.read<HomeBloc>().add(LoadTasksFetch());
         }
       },
       builder: (context, state) {
@@ -80,10 +80,10 @@ class _HomeViewState extends State<HomeView> {
 
   /// Home Body
   Widget _buildHomeBody(TextTheme textTheme, HomeState state) {
-    final inCompleteTasks =
-        state.tasksList.where((task) => !task.isCompleted).toList();
-    final completeTasks =
-        state.tasksList.where((task) => task.isCompleted).toList();
+    // final inCompleteTasks =
+    //     state.tasksList.where((task) => !task.isCompleted).toList();
+    // final completeTasks =
+    //     state.tasksList.where((task) => task.isCompleted).toList();
 
     return SizedBox(
       width: double.infinity,
@@ -168,13 +168,9 @@ class _HomeViewState extends State<HomeView> {
               onChanged: (String? value) {
                 setState(() {
                   selectedValue = value;
-                  if (selectedValue == 'All Tasks') {
-                    currentTasks = state.tasksList;
-                  } else if (selectedValue == 'Done') {
-                    currentTasks = completeTasks;
-                  } else if (selectedValue == 'Not Done') {
-                    currentTasks = inCompleteTasks;
-                  }
+                  context
+                      .read<HomeBloc>()
+                      .add(LoadTasksFetch(filter: selectedValue));
                 });
               },
               buttonStyleData: const ButtonStyleData(
@@ -196,9 +192,7 @@ class _HomeViewState extends State<HomeView> {
 
                   /// Task list not empty
                   ? ListView.builder(
-                      itemCount: selectedValue == null
-                          ? state.tasksList.length
-                          : currentTasks.length,
+                      itemCount: state.tasksList.length,
                       scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
                         return Slidable(
@@ -221,9 +215,7 @@ class _HomeViewState extends State<HomeView> {
                                   ),
                                 ]),
                             child: TaskWidget(
-                                task: selectedValue == null
-                                    ? state.tasksList[index]
-                                    : currentTasks[index],
+                                task: state.tasksList[index],
                                 stateChanged: updateParentState));
                       })
 

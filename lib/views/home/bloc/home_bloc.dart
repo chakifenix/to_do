@@ -16,7 +16,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _loadTasksFetch(LoadTasksFetch event, Emitter<HomeState> emit) async {
     final tasks = await TaskStorage.loadTasks();
-    emit(state.copyWith(tasksList: tasks));
+    final List<Task> answer = event.filter == 'All Tasks'
+        ? tasks
+        : event.filter == 'Done'
+            ? tasks.where((task) => task.isCompleted).toList()
+            : event.filter == 'Not Done'
+                ? tasks.where((task) => !task.isCompleted).toList()
+                : tasks;
+
+    emit(state.copyWith(tasksList: answer));
   }
 
   void _addNewTaskFetch(AddNewTaskFetch event, Emitter<HomeState> emit) async {
@@ -27,7 +35,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _deleteTaskFetch(DeleteTaskFetch event, Emitter<HomeState> emit) async {
     await TaskStorage.deleteTask(event.id);
-    emit(state.copyWith(taskDeleted: true));
+    final tasks = await TaskStorage.loadTasks();
+    emit(state.copyWith(tasksList: tasks));
   }
 
   void _updateTaskFetch(UpdateTaskFetch event, Emitter<HomeState> emit) async {
