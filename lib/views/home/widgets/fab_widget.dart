@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do/main.dart';
 import 'package:to_do/utils/app_colors.dart';
 import 'package:to_do/views/home/bloc/home_bloc.dart';
 import 'package:to_do/views/tasks/task_view.dart';

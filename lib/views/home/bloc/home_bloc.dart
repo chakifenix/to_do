@@ -26,7 +26,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _deleteTaskFetch(DeleteTaskFetch event, Emitter<HomeState> emit) async {
-    emit(state.copyWith(taskDeleted: false));
     await TaskStorage.deleteTask(event.id);
     emit(state.copyWith(taskDeleted: true));
   }

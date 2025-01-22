@@ -196,7 +196,9 @@ class _HomeViewState extends State<HomeView> {
 
                   /// Task list not empty
                   ? ListView.builder(
-                      itemCount: currentTasks.length,
+                      itemCount: selectedValue == null
+                          ? state.tasksList.length
+                          : currentTasks.length,
                       scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
                         return Slidable(
@@ -219,7 +221,9 @@ class _HomeViewState extends State<HomeView> {
                                   ),
                                 ]),
                             child: TaskWidget(
-                                task: currentTasks[index],
+                                task: selectedValue == null
+                                    ? state.tasksList[index]
+                                    : currentTasks[index],
                                 stateChanged: updateParentState));
                       })
 
