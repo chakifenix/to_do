@@ -1,10 +1,14 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:lottie/lottie.dart';
 import 'package:to_do/extensions/space_exs.dart';
+import 'package:to_do/models/task.dart';
 import 'package:to_do/utils/app_colors.dart';
 import 'package:to_do/utils/app_str.dart';
 import 'package:to_do/utils/constants.dart';
+import 'package:to_do/views/home/bloc/home_bloc.dart';
 import 'package:to_do/views/home/widgets/fab_widget.dart';
 import 'package:to_do/views/home/widgets/task_widget.dart';
 
@@ -18,19 +22,69 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final List<int> testing = [234, 23432];
+  // Check value of circle indicator
+  dynamic valueOfIndicator(List<Task> task) {
+    if (task.isNotEmpty) {
+      return task.length;
+    } else {
+      return 3;
+    }
+  }
+
+  // Check Done Tasks
+  int checkDoneTask(List<Task> tasks) {
+    int i = 0;
+    for (Task doneTask in tasks) {
+      if (doneTask.isCompleted) {
+        i++;
+      }
+    }
+    return i;
+  }
+
+  void updateParentState(String newText) {
+    setState(() {});
+  }
+
+  final List<String> items = ['All Tasks', 'Done', 'Not Done'];
+  String? selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomeBloc>().add(LoadTasksFetch());
+  }
+
+  List<Task> currentTasks = [];
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: const Fab(),
-      body: _buildHomeBody(textTheme),
+    return BlocConsumer<HomeBloc, HomeState>(
+      listener: (context, state) {
+        if (state.taskDeleted) {
+          context.read<HomeBloc>().add(LoadTasksFetch());
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          floatingActionButton: Fab(
+            id: state.tasksList.length.toString(),
+          ),
+          body: _buildHomeBody(textTheme, state),
+        );
+      },
     );
   }
 
   /// Home Body
-  Widget _buildHomeBody(TextTheme textTheme) {
+  Widget _buildHomeBody(TextTheme textTheme, HomeState state) {
+    final inCompleteTasks =
+        state.tasksList.where((task) => !task.isCompleted).toList();
+    final completeTasks =
+        state.tasksList.where((task) => task.isCompleted).toList();
+
     return SizedBox(
       width: double.infinity,
       height: double.infinity,
@@ -45,13 +99,15 @@ class _HomeViewState extends State<HomeView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 /// Progress Indicator
-                const SizedBox(
+                SizedBox(
                   width: 30,
                   height: 30,
                   child: CircularProgressIndicator(
                     backgroundColor: Colors.grey,
-                    valueColor: AlwaysStoppedAnimation(AppColors.primaryColor),
-                    value: 0.5,
+                    valueColor:
+                        const AlwaysStoppedAnimation(AppColors.primaryColor),
+                    value: checkDoneTask(state.tasksList) /
+                        valueOfIndicator(state.tasksList),
                   ),
                 ),
 
@@ -69,7 +125,7 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     3.h,
                     Text(
-                      '1 of 3 task',
+                      '${checkDoneTask(state.tasksList)} of ${state.tasksList.length} task',
                       style: textTheme.titleMedium,
                     )
                   ],
@@ -87,15 +143,60 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
 
+          ///Filter
+          DropdownButtonHideUnderline(
+            child: DropdownButton2<String>(
+              isExpanded: true,
+              hint: const Text(
+                'Filter',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
+              items: items
+                  .map((String item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.black),
+                        ),
+                      ))
+                  .toList(),
+              value: selectedValue,
+              onChanged: (String? value) {
+                setState(() {
+                  selectedValue = value;
+                  if (selectedValue == 'All Tasks') {
+                    currentTasks = state.tasksList;
+                  } else if (selectedValue == 'Done') {
+                    currentTasks = completeTasks;
+                  } else if (selectedValue == 'Not Done') {
+                    currentTasks = inCompleteTasks;
+                  }
+                });
+              },
+              buttonStyleData: const ButtonStyleData(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                height: 40,
+                width: 140,
+              ),
+              menuItemStyleData: const MenuItemStyleData(
+                height: 40,
+              ),
+            ),
+          ),
+
           /// Tasks
           Expanded(
             child: SizedBox(
               width: double.infinity,
-              child: testing.isNotEmpty
+              child: state.tasksList.isNotEmpty
 
                   /// Task list not empty
                   ? ListView.builder(
-                      itemCount: testing.length,
+                      itemCount: currentTasks.length,
                       scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
                         return Slidable(
@@ -104,9 +205,12 @@ class _HomeViewState extends State<HomeView> {
                                 children: [
                                   SlidableAction(
                                     onPressed: (_) {
-                                      onDismissed(
-                                        index,
-                                      );
+                                      // onDismissed(
+                                      //   index,
+                                      // );
+                                      context.read<HomeBloc>().add(
+                                          DeleteTaskFetch(
+                                              id: state.tasksList[index].id));
                                     },
                                     backgroundColor: const Color(0xFFFE4A49),
                                     foregroundColor: Colors.white,
@@ -114,7 +218,9 @@ class _HomeViewState extends State<HomeView> {
                                     label: 'Delete',
                                   ),
                                 ]),
-                            child: const TaskWidget());
+                            child: TaskWidget(
+                                task: currentTasks[index],
+                                stateChanged: updateParentState));
                       })
 
                   ///Task list is empty
@@ -127,7 +233,8 @@ class _HomeViewState extends State<HomeView> {
                             width: 200,
                             height: 200,
                             child: Lottie.asset(lottieURL,
-                                animate: testing.isNotEmpty ? false : true),
+                                animate:
+                                    state.tasksList.isNotEmpty ? false : true),
                           ),
                         ),
 
@@ -141,11 +248,5 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
     );
-  }
-
-  void onDismissed(int index) {
-    setState(() {
-      testing.removeAt(index);
-    });
   }
 }

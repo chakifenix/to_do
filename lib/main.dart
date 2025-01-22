@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do/views/home/bloc/home_bloc.dart';
 import 'package:to_do/views/home/home_view.dart';
 import 'package:to_do/views/tasks/task_view.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (context) => HomeBloc()),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -54,8 +62,8 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      // home: const HomeView(),
-      home: TaskView(),
+      home: const HomeView(),
+      // home: TaskView(),
     );
   }
 }
