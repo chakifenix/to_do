@@ -23,8 +23,8 @@ class _TaskWidgetState extends State<TaskWidget> {
 
   @override
   void initState() {
-    textEditingControllerForTitle.text = widget.task.title;
-    textEditingControllerForSubTitle.text = widget.task.subtitle;
+    // textEditingControllerForTitle.text = widget.task.title;
+    // textEditingControllerForSubTitle.text = widget.task.subtitle;
     super.initState();
   }
 
@@ -37,6 +37,8 @@ class _TaskWidgetState extends State<TaskWidget> {
 
   @override
   Widget build(BuildContext context) {
+    textEditingControllerForTitle.text = widget.task.title;
+    textEditingControllerForSubTitle.text = widget.task.subtitle;
     return GestureDetector(
       onTap: () {
         /// Navigate to Task View to see Task Details

@@ -84,6 +84,7 @@ class _HomeViewState extends State<HomeView> {
     //     state.tasksList.where((task) => !task.isCompleted).toList();
     // final completeTasks =
     //     state.tasksList.where((task) => task.isCompleted).toList();
+    print(state.tasksList);
 
     return SizedBox(
       width: double.infinity,
