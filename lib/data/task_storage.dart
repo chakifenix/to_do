@@ -19,7 +19,7 @@ class TaskStorage {
     return _instance!;
   }
 
-  // Сохранение списка заданий
+  // Save List Tasks
   static Future<void> saveTasks(List<Task> tasks) async {
     // final prefs = await SharedPreferences.getInstance();
     final taskListJson = tasks.map((task) => task.toJson()).toList();
@@ -27,7 +27,7 @@ class TaskStorage {
     await _preferences.setString(_taskKey, taskListString);
   }
 
-  // Получение списка заданий
+  // Get List Tasks
   static Future<List<Task>> loadTasks() async {
     final taskListString = _preferences.getString(_taskKey);
 
@@ -39,23 +39,23 @@ class TaskStorage {
     return taskListJson.map((json) => Task.fromJson(json)).toList();
   }
 
-  // Добавление нового задания
+  // Add new tasks
   static Future<void> addTask(Task task) async {
     final tasks = await loadTasks();
     tasks.add(task);
     await saveTasks(tasks);
   }
 
-  // Удаление задачи по id
+  // delete tasks by id
   static Future<void> deleteTask(String taskId) async {
     final tasks = await loadTasks();
-    // Оставляем только задачи, у которых id не совпадает с taskId
+    // We only leave tasks for which the id does not match the taskId.
     // tasks.removeAt(int.parse(taskId));
     final updatedTasks = tasks.where((task) => task.id != taskId).toList();
     await saveTasks(updatedTasks);
   }
 
-  // Обновление задачи по id
+  // Update tasks by id
   static Future<void> updateTask(Task updatedTask) async {
     final tasks = await loadTasks();
     final index = tasks.indexWhere((task) => task.id == updatedTask.id);
