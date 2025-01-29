@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
-import 'package:to_do/data/task_storage.dart';
 import 'package:to_do/extensions/space_exs.dart';
-import 'package:to_do/main.dart';
 import 'package:to_do/models/task.dart';
 import 'package:to_do/utils/app_colors.dart';
 import 'package:to_do/utils/app_str.dart';
@@ -15,12 +13,13 @@ import 'package:to_do/views/tasks/components/rep_textfield.dart';
 import 'package:to_do/views/tasks/widgets/task_view_appbar.dart';
 
 class TaskView extends StatefulWidget {
-  const TaskView(
-      {super.key,
-      required this.titleTaskController,
-      required this.descriptionTaskController,
-      required this.task,
-      required this.id});
+  const TaskView({
+    super.key,
+    required this.titleTaskController,
+    required this.descriptionTaskController,
+    required this.task,
+    required this.id,
+  });
   final TextEditingController? titleTaskController;
   final TextEditingController? descriptionTaskController;
   final Task? task;
@@ -31,8 +30,8 @@ class TaskView extends StatefulWidget {
 }
 
 class _TaskViewState extends State<TaskView> {
-  var title;
-  var subTitle;
+  String? title;
+  String? subTitle;
   DateTime? time;
   DateTime? date;
 
@@ -77,8 +76,8 @@ class _TaskViewState extends State<TaskView> {
     if (widget.titleTaskController?.text != null &&
         widget.descriptionTaskController?.text != null) {
       try {
-        widget.titleTaskController?.text = title;
-        widget.descriptionTaskController?.text = subTitle;
+        widget.titleTaskController?.text = title ?? '';
+        widget.descriptionTaskController?.text = subTitle ?? '';
         context.read<HomeBloc>().add(UpdateTaskFetch(
             task: Task(
                 id: widget.task!.id,
@@ -95,8 +94,8 @@ class _TaskViewState extends State<TaskView> {
       if (title != null && subTitle != null) {
         var task = Task(
             id: widget.id,
-            title: title,
-            subtitle: subTitle,
+            title: title ?? '',
+            subtitle: subTitle ?? '',
             createdTime: time ?? DateTime.now(),
             createdDate: date ?? DateTime.now(),
             isCompleted: false);

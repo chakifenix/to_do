@@ -30,7 +30,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _addNewTaskFetch(AddNewTaskFetch event, Emitter<HomeState> emit) async {
     emit(state.copyWith(taskAdded: false));
     await TaskStorage.addTask(event.task);
-    emit(state.copyWith(taskAdded: true));
+    final tasks = await TaskStorage.loadTasks();
+    emit(state.copyWith(taskAdded: true, tasksList: tasks));
   }
 
   void _deleteTaskFetch(DeleteTaskFetch event, Emitter<HomeState> emit) async {

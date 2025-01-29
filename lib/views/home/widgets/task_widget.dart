@@ -46,10 +46,11 @@ class _TaskWidgetState extends State<TaskWidget> {
           context,
           CupertinoPageRoute(
               builder: (ctx) => TaskView(
-                  titleTaskController: textEditingControllerForTitle,
-                  descriptionTaskController: textEditingControllerForSubTitle,
-                  task: widget.task,
-                  id: widget.task.id)),
+                    titleTaskController: textEditingControllerForTitle,
+                    descriptionTaskController: textEditingControllerForSubTitle,
+                    task: widget.task,
+                    id: widget.task.id,
+                  )),
         );
       },
       child: AnimatedContainer(
